@@ -60,7 +60,7 @@ target_compile_options(avx2 PRIVATE -mavx2)
 target_compile_options(avx-512 PRIVATE -mavx512f)
 
 sources_in_dir(${CMAKE_CURRENT_SOURCE_DIR} src)
-add_executable(${PROJECT_NAME} 
+add_executable(${PROJECT_NAME}
     ${src}
     $<TARGET_OBJECTS:none>
     $<TARGET_OBJECTS:sse>
@@ -73,3 +73,5 @@ add_executable(${PROJECT_NAME}
     $<TARGET_OBJECTS:avx2>
     $<TARGET_OBJECTS:avx-512>
 )
+
+target_link_libraries(${PROJECT_NAME} -lbenchmark)
