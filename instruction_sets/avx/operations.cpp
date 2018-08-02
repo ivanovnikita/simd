@@ -6,25 +6,33 @@
 
 namespace simd_avx
 {
-    void do_stuff()
+    float accumulate(const float initial)
     {
-        alignas(32) const float values[8] =
-        {
-            1.0f, 2.0f, 3.0f, 4.0f,
-            1.0f, 2.0f, 3.0f, 4.0f
-        };
+        const size_t size = 16384;
+        alignas(32) float values[size];
 
-        __m256 a = _mm256_load_ps(values);
-        __m256 b = _mm256_load_ps(values);
-        __m256 result = _mm256_add_ps(a, b);
+        for (size_t i = 0; i < size; ++i)
+        {
+            values[i] = i % 2;
+        }
+
+        __m256 a;
+        __m256 simd_result = _mm256_setzero_ps();
+        for (size_t i = 0; i < size; i += 8)
+        {
+            a = _mm256_load_ps(values);
+            simd_result = _mm256_add_ps(a, simd_result);
+        }
 
         alignas(32) float result_values[8];
-        _mm256_store_ps(result_values, result);
+        _mm256_store_ps(result_values, simd_result);
 
-        for (const float value : result_values)
+        float result = initial;
+        for (const float r : result_values)
         {
-            std::cout << value << " ";
+            result += r;
         }
-        std::cout << std::endl;
+
+        return result;
     }
 }

@@ -6,21 +6,33 @@
 
 namespace simd_sse
 {
-    void do_stuff()
+    float accumulate(const float initial)
     {
-        alignas(16) const float values[4] = {1.0f, 2.0f, 3.0f, 4.0f};
+        const size_t size = 16384;
+        alignas(16) float values[size];
 
-        __m128 a = _mm_load_ps(values);
-        __m128 b = _mm_load_ps(values);
-        __m128 result = _mm_add_ps(a, b);
-
-        alignas(16) float result_values[4] = {};
-        _mm_store_ps(result_values, result);
-
-        for (const float value : result_values)
+        for (size_t i = 0; i < size; ++i)
         {
-            std::cout << value << " ";
+            values[i] = i % 2;
         }
-        std::cout << std::endl;
+
+        __m128 a;
+        __m128 simd_result = _mm_setzero_ps();
+        for (size_t i = 0; i < size; i += 4)
+        {
+            a = _mm_load_ps(values);
+            simd_result = _mm_add_ps(a, simd_result);
+        }
+
+        alignas(16) float result_values[4];
+        _mm_store_ps(result_values, simd_result);
+
+        float result = initial;
+        for (const float r : result_values)
+        {
+            result += r;
+        }
+
+        return result;
     }
 }

@@ -2,5 +2,5 @@
 
 namespace simd_none
 {
-    void do_stuff();
+    float accumulate(float);
 }
