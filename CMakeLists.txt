@@ -1,6 +1,9 @@
 project(simd)
 cmake_minimum_required(VERSION 3.9)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 function(sources_in_dir directory result)
     file(GLOB output
         "${directory}/*.cpp"
@@ -10,6 +13,7 @@ function(sources_in_dir directory result)
     set(${result} ${output} PARENT_SCOPE)
 endfunction()
 
+sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/none" none_src)
 sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/sse" sse_src)
 sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/sse2" sse2_src)
 sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/sse3" sse3_src)
@@ -20,6 +24,7 @@ sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/avx" avx_src)
 sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/avx2" avx2_src)
 sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/avx-512" avx-512_src)
 
+add_library(none OBJECT ${none_src})
 add_library(sse OBJECT ${sse_src})
 add_library(sse2 OBJECT ${sse2_src})
 add_library(sse3 OBJECT ${sse3_src})
@@ -30,6 +35,7 @@ add_library(avx OBJECT ${avx_src})
 add_library(avx2 OBJECT ${avx2_src})
 add_library(avx-512 OBJECT ${avx-512_src})
 
+set_target_properties(none PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(sse PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(sse2 PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(sse3 PROPERTIES LINKER_LANGUAGE CXX)
@@ -53,6 +59,7 @@ target_compile_options(avx-512 PRIVATE -mavx512f)
 sources_in_dir(${CMAKE_CURRENT_SOURCE_DIR} src)
 add_executable(${PROJECT_NAME} 
     ${src}
+    $<TARGET_OBJECTS:none>
     $<TARGET_OBJECTS:sse>
     $<TARGET_OBJECTS:sse2>
     $<TARGET_OBJECTS:sse3>
