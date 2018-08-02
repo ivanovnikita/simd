@@ -11,7 +11,7 @@ template <typename T>
 void benchmark(T func)
 {
     volatile float initial = 0;
-    
+
     const auto start = std::chrono::high_resolution_clock::now();
     const auto result = func(initial);
     const auto end = std::chrono::high_resolution_clock::now();

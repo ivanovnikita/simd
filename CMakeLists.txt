@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.9)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Ofast)
+
 function(sources_in_dir directory result)
     file(GLOB output
         "${directory}/*.cpp"
@@ -46,6 +48,7 @@ set_target_properties(avx PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(avx2 PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(avx-512 PROPERTIES LINKER_LANGUAGE CXX)
 
+#target_compile_options(none PRIVATE -march=native)
 target_compile_options(sse PRIVATE -msse)
 target_compile_options(sse2 PRIVATE -msse2)
 target_compile_options(sse3 PRIVATE -msse3)

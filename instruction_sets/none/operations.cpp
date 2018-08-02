@@ -1,6 +1,7 @@
 #include "operations.h"
 
 #include <iostream>
+#include <numeric>
 
 namespace simd_none
 {
@@ -19,6 +20,7 @@ namespace simd_none
         {
             result += r;
         }
+//        float result = std::accumulate(std::begin(values), std::end(values), initial);
 
         return result;
     }
