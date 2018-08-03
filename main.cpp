@@ -1,7 +1,7 @@
-#include "instruction_sets/none/operations.h"
-#include "instruction_sets/sse/operations.h"
-#include "instruction_sets/avx/operations.h"
-#include "instruction_sets/avx-512/operations.h"
+#include "accumulate/default/implementation.h"
+#include "accumulate/sse/implementation.h"
+#include "accumulate/avx/implementation.h"
+#include "accumulate/avx512f/implementation.h"
 
 #include <benchmark/benchmark.h>
 
@@ -21,11 +21,11 @@ protected:
     std::vector<float, simd::static_aligned_allocator<float, 64>> values;
 };
 
-BENCHMARK_DEFINE_F(BM_accumulate, none)(benchmark::State& state)
+BENCHMARK_DEFINE_F(BM_accumulate, def)(benchmark::State& state)
 {
     for (auto _ : state)
     {
-        benchmark::DoNotOptimize(simd::none::accumulate(values));
+        benchmark::DoNotOptimize(simd::def::accumulate(values));
     }
 }
 
@@ -45,11 +45,11 @@ BENCHMARK_DEFINE_F(BM_accumulate, avx)(benchmark::State& state)
     }
 }
 
-//BENCHMARK_REGISTER_F(BM_accumulate, none)->RangeMultiplier(2)->Range(64, 2LL << 24);
+//BENCHMARK_REGISTER_F(BM_accumulate, def)->RangeMultiplier(2)->Range(64, 2LL << 24);
 //BENCHMARK_REGISTER_F(BM_accumulate, sse)->RangeMultiplier(2)->Range(64, 2LL << 24);
 //BENCHMARK_REGISTER_F(BM_accumulate, avx)->RangeMultiplier(2)->Range(64, 2LL << 24);
-BENCHMARK_REGISTER_F(BM_accumulate, none)->Arg(2LL << 24);
-BENCHMARK_REGISTER_F(BM_accumulate, sse)->Arg(2LL << 24);
-BENCHMARK_REGISTER_F(BM_accumulate, avx)->Arg(2LL << 24);
+BENCHMARK_REGISTER_F(BM_accumulate, def)->Arg(2LL << 15);
+BENCHMARK_REGISTER_F(BM_accumulate, sse)->Arg(2LL << 15);
+BENCHMARK_REGISTER_F(BM_accumulate, avx)->Arg(2LL << 15);
 
 BENCHMARK_MAIN();

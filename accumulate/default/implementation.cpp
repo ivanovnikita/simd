@@ -1,6 +1,6 @@
-#include "operations.h"
+#include "implementation.h"
 
-namespace simd::none
+namespace simd::def
 {
     float accumulate(const std::vector<float, static_aligned_allocator<float, 64>>& values)
     {

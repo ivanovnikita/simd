@@ -4,7 +4,51 @@ cmake_minimum_required(VERSION 3.9)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -Ofast)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(COMMON_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(COMMON_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
+else()
+    message(FATAL_ERROR "Unknown value of CMAKE_BUILD_TYPE!")
+endif()
+
+set(implementation_types
+    default
+    sse
+    sse2
+    sse3
+    ssse3
+    sse4.1
+    sse4.2
+    avx
+    avx2
+    avx512f
+)
+
+function(get_implementation_flags implementation result_flags)
+    if(${implementation} STREQUAL "default")
+        set(flags "-march=native")
+    elseif(${implementation} STREQUAL "sse")
+        set(flags "-msse")
+    elseif(${implementation} STREQUAL "sse2")
+        set(flags "-msse2")
+    elseif(${implementation} STREQUAL "sse3")
+        set(flags "-msse3")
+    elseif(${implementation} STREQUAL "ssse3")
+        set(flags "-mssse3")
+    elseif(${implementation} STREQUAL "sse4.1")
+        set(flags "-msse4.1")
+    elseif(implementation STREQUAL "sse4.2")
+        set(flags "-msse4.2")
+    elseif(${implementation} STREQUAL "avx")
+        set(flags "-mavx")
+    elseif(${implementation} STREQUAL "avx2")
+        set(flags "-mavx2")
+    elseif(${implementation} STREQUAL "avx512f")
+        set(flags "-mavx512f")
+    endif()
+    set(${result_flags} ${flags} PARENT_SCOPE)
+endfunction()
 
 function(sources_in_dir directory result)
     file(GLOB output
@@ -15,75 +59,24 @@ function(sources_in_dir directory result)
     set(${result} ${output} PARENT_SCOPE)
 endfunction()
 
-sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/none" none_src)
-sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/sse" sse_src)
-sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/sse2" sse2_src)
-sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/sse3" sse3_src)
-sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/ssse3" ssse3_src)
-sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/sse4.1" sse4.1_src)
-sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/sse4.2" sse4.2_src)
-sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/avx" avx_src)
-sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/avx2" avx2_src)
-sources_in_dir("${CMAKE_CURRENT_SOURCE_DIR}/instruction_sets/avx-512" avx-512_src)
+function(add_algorithm directory result_src)
+    set(all_sources "")
+    foreach(implementation_type ${implementation_types})
+        sources_in_dir("${directory}/${implementation_type}" src)
+        get_implementation_flags(implementation_type flags)
+        set_source_files_properties(${src} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS} ${flags}")
+        list(APPEND all_sources ${src})
+    endforeach()
+    set(${result_src} ${all_sources} PARENT_SCOPE)
+endfunction()
 
-add_library(none OBJECT ${none_src})
-add_library(sse OBJECT ${sse_src})
-add_library(sse2 OBJECT ${sse2_src})
-add_library(sse3 OBJECT ${sse3_src})
-add_library(ssse3 OBJECT ${ssse3_src})
-add_library(sse4.1 OBJECT ${sse4.1_src})
-add_library(sse4.2 OBJECT ${sse4.2_src})
-add_library(avx OBJECT ${avx_src})
-add_library(avx2 OBJECT ${avx2_src})
-add_library(avx-512 OBJECT ${avx-512_src})
-
-set_target_properties(none PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(sse PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(sse2 PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(sse3 PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(ssse3 PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(sse4.1 PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(sse4.2 PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(avx PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(avx2 PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(avx-512 PROPERTIES LINKER_LANGUAGE CXX)
-
-#target_compile_options(none PRIVATE -march=native)
-target_compile_options(sse PRIVATE -msse)
-target_compile_options(sse2 PRIVATE -msse2)
-target_compile_options(sse3 PRIVATE -msse3)
-target_compile_options(ssse3 PRIVATE -mssse3)
-target_compile_options(sse4.1 PRIVATE -msse4.1)
-target_compile_options(sse4.2 PRIVATE -msse4.2)
-target_compile_options(avx PRIVATE -mavx)
-target_compile_options(avx2 PRIVATE -mavx2)
-target_compile_options(avx-512 PRIVATE -mavx512f)
+add_algorithm("${CMAKE_CURRENT_SOURCE_DIR}/accumulate" accumulate_src)
 
 sources_in_dir(${CMAKE_CURRENT_SOURCE_DIR} src)
 add_executable(${PROJECT_NAME}
     ${src}
-    $<TARGET_OBJECTS:none>
-    $<TARGET_OBJECTS:sse>
-    $<TARGET_OBJECTS:sse2>
-    $<TARGET_OBJECTS:sse3>
-    $<TARGET_OBJECTS:ssse3>
-    $<TARGET_OBJECTS:sse4.1>
-    $<TARGET_OBJECTS:sse4.2>
-    $<TARGET_OBJECTS:avx>
-    $<TARGET_OBJECTS:avx2>
-    $<TARGET_OBJECTS:avx-512>
+    ${accumulate_src}
 )
 
 target_link_libraries(${PROJECT_NAME} -lbenchmark)
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
-target_include_directories(none PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(sse PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(sse2 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(sse3 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(ssse3 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(sse4.1 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(sse4.2 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(avx PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(avx2 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(avx-512 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
