@@ -1,0 +1,8 @@
+[requires]
+Celero/2.3.0@ivanovnikita/stable
+
+[options]
+Celero:shared=False
+
+[generators]
+cmake  

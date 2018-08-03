@@ -1,6 +1,25 @@
 project(simd)
 cmake_minimum_required(VERSION 3.9)
 
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    option(USE_LIBC++ "Use libc++?" OFF)
+    if (${USE_LIBC++})
+        #message()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+        set(CONAN_STD_OPTION "CLANG_STD")
+    endif()
+endif()
+
+include("cmake/cmake-conan/conan.cmake")
+
+conan_cmake_run(
+    CONANFILE conanfile.txt
+    ${CONAN_STD_OPTION}
+    BASIC_SETUP
+    CMAKE_TARGETS
+    BUILD missing
+)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -13,7 +32,7 @@ else()
 endif()
 
 set(implementation_types
-    default
+    scalar
     sse
     sse2
     sse3
@@ -26,7 +45,7 @@ set(implementation_types
 )
 
 function(get_implementation_flags implementation result_flags)
-    if(${implementation} STREQUAL "default")
+    if(${implementation} STREQUAL "scalar")
         set(flags "-march=native")
     elseif(${implementation} STREQUAL "sse")
         set(flags "-msse")
@@ -70,13 +89,16 @@ function(add_algorithm directory result_src)
     set(${result_src} ${all_sources} PARENT_SCOPE)
 endfunction()
 
-add_algorithm("${CMAKE_CURRENT_SOURCE_DIR}/accumulate" accumulate_src)
+add_algorithm(src/accumulate accumulate_src)
 
-sources_in_dir(${CMAKE_CURRENT_SOURCE_DIR} src)
-add_executable(${PROJECT_NAME}
-    ${src}
+sources_in_dir(src sources)
+add_library(${PROJECT_NAME}
+    ${sources}
     ${accumulate_src}
 )
+target_include_directories(${PROJECT_NAME} PUBLIC src)
 
-target_link_libraries(${PROJECT_NAME} -lbenchmark)
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+sources_in_dir(benchmarks benchmark_sources)
+set(benchmarks "benchmark-${PROJECT_NAME}")
+add_executable(${benchmarks} ${benchmark_sources})
+target_link_libraries(${benchmarks} ${PROJECT_NAME} CONAN_PKG::Celero)

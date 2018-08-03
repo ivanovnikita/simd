@@ -4,7 +4,7 @@
 
 #include <cstdint>
 #include <cstddef>
-#include <stdexcept>
+#include <new>
 
 namespace simd
 {
