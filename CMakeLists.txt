@@ -75,3 +75,15 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} -lbenchmark)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_include_directories(none PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(sse PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(sse2 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(sse3 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(ssse3 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(sse4.1 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(sse4.2 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(avx PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(avx2 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(avx-512 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

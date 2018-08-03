@@ -1,6 +1,10 @@
 #pragma once
 
-namespace simd_sse
+#include "static_aligned_allocator.hpp"
+
+#include <vector>
+
+namespace simd::sse
 {
-    float accumulate(float);
+    float accumulate(const std::vector<float, static_aligned_allocator<float, 64>>& values);
 }

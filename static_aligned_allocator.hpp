@@ -16,6 +16,12 @@ namespace simd
         using pointer = T*;
         using size_type = size_t;
 
+        template<typename U>
+        struct rebind
+        {
+            using other = static_aligned_allocator<U, N>;
+        };
+
         pointer allocate(size_type);
         void deallocate(pointer, size_type) noexcept;
     };

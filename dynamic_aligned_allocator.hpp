@@ -16,6 +16,12 @@ namespace simd
         using pointer = T*;
         using size_type = size_t;
 
+        template<typename U>
+        struct rebind
+        {
+            using other = dynamic_aligned_allocator<U>;
+        };
+
         explicit dynamic_aligned_allocator(uint8_t alignment) noexcept;
 
         pointer allocate(size_type);

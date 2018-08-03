@@ -1,6 +1,10 @@
 #pragma once
 
-namespace simd_avx512
+#include "static_aligned_allocator.hpp"
+
+#include <vector>
+
+namespace simd::avx512
 {
-    void do_stuff();
+    float accumulate(const std::vector<float, static_aligned_allocator<float, 64>>& values);
 }

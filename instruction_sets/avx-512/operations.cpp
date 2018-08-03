@@ -2,33 +2,27 @@
 
 #include <immintrin.h>
 
-#include <iostream>
-
-namespace simd_avx512
+namespace simd::avx512
 {
-    void do_stuff()
+    float accumulate(const std::vector<float, static_aligned_allocator<float, 64>>& values)
     {
-        alignas(64) const float values[16] =
+        __m512 a;
+        __m512 simd_result = _mm512_setzero_ps();
+        for (size_t i = 0; i < values.size(); i += 16)
         {
-            1.0f, 2.0f, 3.0f, 4.0f,
-            1.0f, 2.0f, 3.0f, 4.0f,
-            1.0f, 2.0f, 3.0f, 4.0f,
-            1.0f, 2.0f, 3.0f, 4.0f
-        };
-
-        std::cout << alignof(values) << std::endl;
-
-        __m512 a = _mm512_load_ps(values);
-        __m512 b = _mm512_load_ps(values);
-        __m512 result = _mm512_add_ps(a, b);
-
-        alignas(64) float result_values[16] = {};
-        _mm512_store_ps(result_values, result);
-
-        for (const float value : result_values)
-        {
-            std::cout << value << " ";
+            a = _mm512_load_ps(&values[i]);
+            simd_result = _mm512_add_ps(a, simd_result);
         }
-        std::cout << std::endl;
+
+        alignas(64) float result_values[16];
+        _mm512_store_ps(result_values, simd_result);
+
+        float result = 0;
+        for (const float r : result_values)
+        {
+            result += r;
+        }
+
+        return result;
     }
 }
