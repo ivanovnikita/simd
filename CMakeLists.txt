@@ -79,7 +79,7 @@ function(sources_in_dir directory result)
 endfunction()
 
 function(add_implementation directory result_src)
-    set(all_sources "")
+    sources_in_dir(${directory} all_sources)
     foreach(implementation_type ${implementation_types})
         sources_in_dir("${directory}/${implementation_type}" src)
         get_implementation_flags(implementation_type flags)

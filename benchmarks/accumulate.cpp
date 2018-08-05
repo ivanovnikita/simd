@@ -1,7 +1,7 @@
-#include "accumulate/scalar/implementation.h"
-#include "accumulate/sse/implementation.h"
-#include "accumulate/avx/implementation.h"
-#include "accumulate/avx512f/implementation.h"
+#include "accumulate/scalar/instantiation.h"
+#include "accumulate/sse/instantiation.h"
+#include "accumulate/avx/instantiation.h"
+#include "accumulate/avx512f/instantiation.h"
 
 #include "instrset_detect.h"
 
