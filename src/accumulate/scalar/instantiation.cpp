@@ -1,6 +1,5 @@
 #include "instantiation.h"
 #include "../implementation.hpp"
-#include "types/scalar/vector.hpp"
 
 namespace simd::scalar
 {
