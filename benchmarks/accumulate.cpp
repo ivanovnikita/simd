@@ -40,7 +40,7 @@ public:
         values.clear();
     }
 
-    std::vector<float, simd::static_aligned_allocator<float, 64>> values;
+    std::vector<float, simd::static_aligned_allocator<float, simd::MAX_REQUIRED_ALIGNMENT>> values;
 };
 
 BASELINE_F(Accumulate, Scalar, AccumulateFixture, 10, 10000)

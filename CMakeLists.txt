@@ -78,7 +78,7 @@ function(sources_in_dir directory result)
     set(${result} ${output} PARENT_SCOPE)
 endfunction()
 
-function(add_algorithm directory result_src)
+function(add_implementation directory result_src)
     set(all_sources "")
     foreach(implementation_type ${implementation_types})
         sources_in_dir("${directory}/${implementation_type}" src)
@@ -89,11 +89,13 @@ function(add_algorithm directory result_src)
     set(${result_src} ${all_sources} PARENT_SCOPE)
 endfunction()
 
-add_algorithm(src/accumulate accumulate_src)
+add_implementation(src/accumulate accumulate_src)
+add_implementation(src/types types_src)
 
 sources_in_dir(src sources)
 add_library(${PROJECT_NAME}
     ${sources}
+    ${types_src}
     ${accumulate_src}
 )
 target_include_directories(${PROJECT_NAME} PUBLIC src)

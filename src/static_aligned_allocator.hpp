@@ -42,4 +42,6 @@ namespace simd
     {
         _mm_free(ptr);
     }
+
+    constexpr uint8_t MAX_REQUIRED_ALIGNMENT = 64; // AVX512
 }

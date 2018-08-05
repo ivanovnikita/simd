@@ -6,5 +6,6 @@
 
 namespace simd::avx
 {
-    float accumulate(const std::vector<float, static_aligned_allocator<float, 64>>& values);
+    template <typename T>
+    T accumulate(const std::vector<T, static_aligned_allocator<T, MAX_REQUIRED_ALIGNMENT>>& values);
 }
