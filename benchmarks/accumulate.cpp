@@ -12,7 +12,7 @@ class AccumulateFixture : public celero::TestFixture
 public:
     std::vector<celero::TestFixture::ExperimentValue> getExperimentValues() const override
     {
-        const int total_number_of_tests = 24;
+        const int total_number_of_tests = 13;
         std::vector<celero::TestFixture::ExperimentValue> problem_space;
         problem_space.reserve(total_number_of_tests);
 
@@ -43,17 +43,17 @@ public:
     std::vector<float, simd::static_aligned_allocator<float, 64>> values;
 };
 
-BASELINE_F(Accumulate, Scalar, AccumulateFixture, 10, 10)
+BASELINE_F(Accumulate, Scalar, AccumulateFixture, 10, 10000)
 {
     celero::DoNotOptimizeAway(simd::scalar::accumulate(values));
 }
 
-BENCHMARK_F(Accumulate, Sse, AccumulateFixture, 10, 10)
+BENCHMARK_F(Accumulate, Sse, AccumulateFixture, 10, 10000)
 {
     celero::DoNotOptimizeAway(simd::sse::accumulate(values));
 }
 
-BENCHMARK_F(Accumulate, Avx, AccumulateFixture, 10, 10)
+BENCHMARK_F(Accumulate, Avx, AccumulateFixture, 10, 10000)
 {
     celero::DoNotOptimizeAway(simd::avx::accumulate(values));
 }
