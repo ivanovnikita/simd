@@ -19,18 +19,18 @@ namespace simd::detail
         template <>
         accumulate_t<float>* init()
         {
-            if (has_avx512f()) return avx512::accumulate<float>;
+            if (has_avx512f()) { std::printf("avx512f::accumulate<float> choosen\n"); return avx512::accumulate<float>; }
             else if (has_avx()) { std::printf("avx::accumulate<float> choosen\n"); return avx::accumulate<float>; }
-            else if (has_sse()) return sse::accumulate<float>;
-            else return scalar::accumulate<float>;
+            else if (has_sse()) { std::printf("sse::accumulate<float> choosen\n"); return sse::accumulate<float>; }
+            else { std::printf("scalar::accumulate<float> choosen\n"); return scalar::accumulate<float>; }
         }
 
         template <>
         accumulate_t<double>* init()
         {
-            if (has_avx512f()) return avx512::accumulate<double>;
+            if (has_avx512f()) { std::printf("avx512f::accumulate<double> choosen\n"); return avx512::accumulate<double>; }
             else if (has_avx()) { std::printf("avx::accumulate<double> choosen\n"); return avx::accumulate<double>; }
-            else return scalar::accumulate<double>;
+            else { std::printf("scalar::accumulate<double> choosen\n"); return scalar::accumulate<double>; }
         }
     }
 
