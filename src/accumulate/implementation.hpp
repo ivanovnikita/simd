@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace simd
+namespace simd::detail
 {
     template <template <typename> typename Vector, typename T>
     T accumulate(const std::vector<T, static_aligned_allocator<T, MAX_REQUIRED_ALIGNMENT>>& values)

@@ -7,7 +7,7 @@ namespace simd::avx512
     template <typename T>
     T accumulate(const std::vector<T, static_aligned_allocator<T, MAX_REQUIRED_ALIGNMENT>>& values)
     {
-        return simd::accumulate<vector>(values);
+        return simd::detail::accumulate<vector>(values);
     }
 
     template float accumulate(const std::vector<float, static_aligned_allocator<float, MAX_REQUIRED_ALIGNMENT>>&);

@@ -3,6 +3,8 @@
 #include "accumulate/avx/instantiation.h"
 #include "accumulate/avx512f/instantiation.h"
 
+#include "accumulate/accumulate.h"
+
 #include "instrset_detect.h"
 
 #include <celero/Celero.h>
@@ -56,6 +58,11 @@ BENCHMARK_F(Accumulate, Sse, AccumulateFixture, 10, 10000)
 BENCHMARK_F(Accumulate, Avx, AccumulateFixture, 10, 10000)
 {
     celero::DoNotOptimizeAway(simd::avx::accumulate(values));
+}
+
+BENCHMARK_F(Accumulate, AutoChoosen, AccumulateFixture, 10, 10000)
+{
+    celero::DoNotOptimizeAway(simd::accumulate(values));
 }
 
 //BENCHMARK_F(Accumulate, Avx512, AccumulateFixture, 10, 100)
