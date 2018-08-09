@@ -61,11 +61,6 @@ BENCHMARK_F(AccumulateFloat, Avx, AccumulateFixture<float>, 10, 10000)
     celero::DoNotOptimizeAway(simd::detail::accumulate<simd::avx_tag>(values));
 }
 
-BENCHMARK_F(AccumulateFloat, AutoChoosen, AccumulateFixture<float>, 10, 10000)
-{
-    celero::DoNotOptimizeAway(simd::accumulate(values));
-}
-
 //BENCHMARK_F(Accumulate, Avx512f, AccumulateFixture<float>, 10, 10000)
 //{
 //    celero::DoNotOptimizeAway(simd::detail::accumulate<simd::avx512f_tag>(values));
@@ -79,11 +74,6 @@ BASELINE_F(AccumulateDouble, Scalar, AccumulateFixture<double>, 10, 10000)
 BENCHMARK_F(AccumulateDouble, Avx, AccumulateFixture<double>, 10, 10000)
 {
     celero::DoNotOptimizeAway(simd::detail::accumulate<simd::avx_tag>(values));
-}
-
-BENCHMARK_F(AccumulateDouble, AutoChoosen, AccumulateFixture<double>, 10, 10000)
-{
-    celero::DoNotOptimizeAway(simd::accumulate(values));
 }
 
 //BENCHMARK_F(Accumulate, Avx512f, AccumulateFixture<float>, 10, 10000)

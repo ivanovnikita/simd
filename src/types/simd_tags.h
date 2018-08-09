@@ -6,4 +6,5 @@ namespace simd
     struct avx_tag {};
     struct sse_tag {};
     struct scalar_tag {};
+    struct best_available_tag {};
 }

@@ -14,7 +14,7 @@ struct TypePair
 };
 
 template <class T>
-class accumulate : public testing::Test
+class accumulate_test : public testing::Test
 {
 protected:
     using value_type = typename T::value_type;
@@ -35,18 +35,22 @@ protected:
 
 using AccumulateTestingPairs = testing::Types
 <
-    TypePair<simd::scalar_tag, float>
+    TypePair<simd::best_available_tag, float>
+    , TypePair<simd::best_available_tag, double>
+    , TypePair<simd::scalar_tag, float>
     , TypePair<simd::scalar_tag, double>
     , TypePair<simd::sse_tag, float>
     , TypePair<simd::avx_tag, float>
     , TypePair<simd::avx_tag, double>
 >;
 
-TYPED_TEST_CASE(accumulate, AccumulateTestingPairs);
+TYPED_TEST_CASE(accumulate_test, AccumulateTestingPairs);
 
-TYPED_TEST(accumulate, equal_elements)
+TYPED_TEST(accumulate_test, equal_elements)
 {
     using simd_tag = typename TypeParam::simd_tag;
+    using namespace simd;
+    using namespace simd::detail;
 
-    EXPECT_EQ(this->count, simd::detail::accumulate<simd_tag>(this->values));
+    EXPECT_EQ(this->count, accumulate<simd_tag>(this->values));
 }
