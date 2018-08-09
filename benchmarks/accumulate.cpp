@@ -9,6 +9,7 @@
 
 #include <celero/Celero.h>
 
+template <typename T>
 class AccumulateFixture : public celero::TestFixture
 {
 public:
@@ -42,30 +43,50 @@ public:
         values.clear();
     }
 
-    std::vector<float, simd::static_aligned_allocator<float, simd::MAX_REQUIRED_ALIGNMENT>> values;
+    simd::aligned_vector<T> values;
 };
 
-BASELINE_F(Accumulate, Scalar, AccumulateFixture, 10, 10000)
+BASELINE_F(AccumulateFloat, Scalar, AccumulateFixture<float>, 10, 10000)
 {
     celero::DoNotOptimizeAway(simd::detail::accumulate<simd::scalar_tag>(values));
 }
 
-BENCHMARK_F(Accumulate, Sse, AccumulateFixture, 10, 10000)
+BENCHMARK_F(AccumulateFloat, Sse, AccumulateFixture<float>, 10, 10000)
 {
     celero::DoNotOptimizeAway(simd::detail::accumulate<simd::sse_tag>(values));
 }
 
-BENCHMARK_F(Accumulate, Avx, AccumulateFixture, 10, 10000)
+BENCHMARK_F(AccumulateFloat, Avx, AccumulateFixture<float>, 10, 10000)
 {
     celero::DoNotOptimizeAway(simd::detail::accumulate<simd::avx_tag>(values));
 }
 
-BENCHMARK_F(Accumulate, AutoChoosen, AccumulateFixture, 10, 10000)
+BENCHMARK_F(AccumulateFloat, AutoChoosen, AccumulateFixture<float>, 10, 10000)
 {
     celero::DoNotOptimizeAway(simd::accumulate(values));
 }
 
-//BENCHMARK_F(Accumulate, Avx512f, AccumulateFixture, 10, 10000)
+//BENCHMARK_F(Accumulate, Avx512f, AccumulateFixture<float>, 10, 10000)
+//{
+//    celero::DoNotOptimizeAway(simd::detail::accumulate<simd::avx512f_tag>(values));
+//}
+
+BASELINE_F(AccumulateDouble, Scalar, AccumulateFixture<double>, 10, 10000)
+{
+    celero::DoNotOptimizeAway(simd::detail::accumulate<simd::scalar_tag>(values));
+}
+
+BENCHMARK_F(AccumulateDouble, Avx, AccumulateFixture<double>, 10, 10000)
+{
+    celero::DoNotOptimizeAway(simd::detail::accumulate<simd::avx_tag>(values));
+}
+
+BENCHMARK_F(AccumulateDouble, AutoChoosen, AccumulateFixture<double>, 10, 10000)
+{
+    celero::DoNotOptimizeAway(simd::accumulate(values));
+}
+
+//BENCHMARK_F(Accumulate, Avx512f, AccumulateFixture<float>, 10, 10000)
 //{
 //    celero::DoNotOptimizeAway(simd::detail::accumulate<simd::avx512f_tag>(values));
 //}
