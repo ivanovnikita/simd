@@ -1,6 +1,7 @@
 #include "accumulate/scalar_implementation.hpp"
 #include "accumulate/sse/instantiation.h"
 #include "accumulate/avx/instantiation.h"
+#include "accumulate/avx2/instantiation.h"
 #include "accumulate/avx512f/instantiation.h"
 #include "accumulate/accumulate.h"
 
@@ -21,7 +22,7 @@ protected:
 
     void SetUp() override
     {
-        count = 200;
+        count = 111;
         values.resize(count);
         for (size_t i = 0; i < count; ++i)
         {
@@ -37,11 +38,13 @@ using AccumulateTestingPairs = testing::Types
 <
     TypePair<simd::best_available_tag, float>
     , TypePair<simd::best_available_tag, double>
+    , TypePair<simd::best_available_tag, int8_t>
     , TypePair<simd::scalar_tag, float>
     , TypePair<simd::scalar_tag, double>
     , TypePair<simd::sse_tag, float>
     , TypePair<simd::avx_tag, float>
     , TypePair<simd::avx_tag, double>
+    , TypePair<simd::avx2_tag, int8_t>
 >;
 
 TYPED_TEST_CASE(accumulate_test, AccumulateTestingPairs);

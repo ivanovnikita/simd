@@ -5,6 +5,7 @@
 #include "scalar_implementation.hpp"
 #include "sse/instantiation.h"
 #include "avx/instantiation.h"
+#include "avx2/instantiation.h"
 #include "avx512f/instantiation.h"
 #include "simd_implementation_decl.hpp"
 #include "types/simd_tags.h"
@@ -36,8 +37,17 @@ namespace simd::detail
             {
                 if (has_avx512f())
                 {
-                    std::printf("avx512f::accumulate<%s> chosen\n", typeid(T).name());
+                    std::printf("accumulate<avx512f_tag, %s> chosen\n", typeid(T).name());
                     return accumulate<avx512f_tag, T>;
+                }
+            }
+
+            if constexpr (has_function_accumulate<avx2_tag, T>::value)
+            {
+                if (has_avx2())
+                {
+                    std::printf("accumulate<avx2_tag, %s> chosen\n", typeid(T).name());
+                    return accumulate<avx2_tag, T>;
                 }
             }
 
@@ -45,7 +55,7 @@ namespace simd::detail
             {
                 if (has_avx())
                 {
-                    std::printf("avx::accumulate<%s> chosen\n", typeid(T).name());
+                    std::printf("accumulate<avx_tag, %s> chosen\n", typeid(T).name());
                     return accumulate<avx_tag, T>;
                 }
             }
@@ -54,12 +64,12 @@ namespace simd::detail
             {
                 if (has_sse())
                 {
-                    std::printf("sse::accumulate<%s> chosen\n", typeid(T).name());
+                    std::printf("accumulate<sse_tag, %s> chosen\n", typeid(T).name());
                     return accumulate<sse_tag, T>;
                 }
             }
 
-            std::printf("scalar::accumulate<%s> chosen\n", typeid(T).name());
+            std::printf("accumulate<scalar_tag, %s> chosen\n", typeid(T).name());
             return accumulate<scalar_tag, T>;
         }
     }
@@ -67,6 +77,7 @@ namespace simd::detail
     template <typename T>
     accumulate_t<T>* const best_available_accumulate = init<T>();
 
-    template accumulate_t<float>* const best_available_accumulate<float>;
-    template accumulate_t<double>* const best_available_accumulate<double>;
+    template<> accumulate_t<float>* const best_available_accumulate<float> = init<float>();
+    template<> accumulate_t<double>* const best_available_accumulate<double> = init<double>();
+    template<> accumulate_t<int8_t>* const best_available_accumulate<int8_t> = init<int8_t>();
 }
