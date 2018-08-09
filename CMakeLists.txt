@@ -101,3 +101,11 @@ sources_in_dir(benchmarks benchmark_sources)
 set(benchmarks "benchmark-${PROJECT_NAME}")
 add_executable(${benchmarks} ${benchmark_sources})
 target_link_libraries(${benchmarks} ${PROJECT_NAME} CONAN_PKG::Celero)
+
+find_package(GTest REQUIRED)
+
+sources_in_dir(tests tests_src)
+add_executable(tests ${tests_src})
+target_link_libraries(tests ${PROJECT_NAME} GTest::Main)
+
+add_test(NAME tests COMMAND tests)

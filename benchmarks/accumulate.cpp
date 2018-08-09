@@ -47,7 +47,7 @@ public:
 
 BASELINE_F(Accumulate, Scalar, AccumulateFixture, 10, 10000)
 {
-    celero::DoNotOptimizeAway(simd::scalar::accumulate(values));
+    celero::DoNotOptimizeAway(simd::detail::accumulate<simd::scalar_tag>(values));
 }
 
 BENCHMARK_F(Accumulate, Sse, AccumulateFixture, 10, 10000)

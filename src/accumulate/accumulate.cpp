@@ -60,7 +60,7 @@ namespace simd::detail
             }
 
             std::printf("scalar::accumulate<%s> chosen\n", typeid(T).name());
-            return scalar::accumulate<T>;
+            return accumulate<scalar_tag, T>;
         }
     }
 

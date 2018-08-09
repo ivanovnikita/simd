@@ -1,5 +1,6 @@
 [requires]
 Celero/2.3.0@ivanovnikita/stable
+googletest/1.8@ivanovnikita/stable
 
 [options]
 Celero:shared=False
