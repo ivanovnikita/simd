@@ -32,7 +32,6 @@ else()
 endif()
 
 set(implementation_types
-    scalar
     sse
     sse2
     sse3
@@ -45,9 +44,7 @@ set(implementation_types
 )
 
 function(get_implementation_flags implementation result_flags)
-    if(${implementation} STREQUAL "scalar")
-        set(flags "-march=native")
-    elseif(${implementation} STREQUAL "sse")
+    if(${implementation} STREQUAL "sse")
         set(flags "-msse")
     elseif(${implementation} STREQUAL "sse2")
         set(flags "-msse2")

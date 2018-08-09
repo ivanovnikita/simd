@@ -1,15 +1,16 @@
 #pragma once
 
 #include "vector.hpp"
+#include "types/vector.hpp"
 
 #include <xmmintrin.h>
 
 #include <cstdint>
 
-namespace simd::sse
+namespace simd
 {
     template <>
-    class vector<float>
+    class vector<float, sse_tag>
     {
     public:
         using value_type = float;
@@ -34,47 +35,47 @@ namespace simd::sse
         intr_type m_values;
     };
 
-    vector<float> operator+(vector<float>, vector<float>) noexcept;
+    vector<float, sse_tag> operator+(vector<float, sse_tag>, vector<float, sse_tag>) noexcept;
 
     // definitions
 
-    vector<float>::vector(intr_type values) noexcept
+    vector<float, sse_tag>::vector(intr_type values) noexcept
         : m_values(values)
     {
     }
 
-    vector<float>::vector(const value_type* ptr) noexcept
+    vector<float, sse_tag>::vector(const value_type* ptr) noexcept
     {
         load_p(ptr);
     }
 
-    vector<float>::operator intr_type() const noexcept
+    vector<float, sse_tag>::operator intr_type() const noexcept
     {
         return m_values;
     }
 
-    void vector<float>::setzero_p() noexcept
+    void vector<float, sse_tag>::setzero_p() noexcept
     {
         m_values = _mm_setzero_ps();
     }
 
-    void vector<float>::load_p(const value_type* ptr) noexcept
+    void vector<float, sse_tag>::load_p(const value_type* ptr) noexcept
     {
         m_values = _mm_load_ps(ptr);
     }
 
-    void vector<float>::store_p(value_type* ptr) const noexcept
+    void vector<float, sse_tag>::store_p(value_type* ptr) const noexcept
     {
         _mm_store_ps(ptr, m_values);
     }
 
-    vector<float>& vector<float>::operator+=(vector<float> rhs) noexcept
+    vector<float, sse_tag>& vector<float, sse_tag>::operator+=(vector<float, sse_tag> rhs) noexcept
     {
         m_values = *this + rhs;
         return *this;
     }
 
-    vector<float> operator+(vector<float> lhs, vector<float> rhs) noexcept
+    vector<float, sse_tag> operator+(vector<float, sse_tag> lhs, vector<float, sse_tag> rhs) noexcept
     {
         return _mm_add_ps(lhs, rhs);
     }

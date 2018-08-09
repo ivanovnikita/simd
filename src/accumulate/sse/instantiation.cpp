@@ -1,14 +1,23 @@
 #include "instantiation.h"
-#include "../implementation.hpp"
+#include "../simd_implementation_def.hpp"
 #include "types/sse/vector.hpp"
 
-namespace simd::sse
+namespace simd::detail
 {
-    template <typename T>
-    T accumulate(const std::vector<T, static_aligned_allocator<T, MAX_REQUIRED_ALIGNMENT>>& values)
+    template
+    <
+        typename simd_tag
+        , typename T
+        , typename std::enable_if_t
+        <
+            std::is_same_v<simd_tag, sse_tag>
+            and std::is_same_v<T, float>
+        >*
+    >
+    T accumulate(const aligned_vector<T>& values)
     {
-        return simd::detail::accumulate<vector>(values);
+        return accumulate_simd_impl<simd_tag>(values);
     }
 
-    template float accumulate(const std::vector<float, static_aligned_allocator<float, MAX_REQUIRED_ALIGNMENT>>&);
+    template float accumulate<sse_tag, float, nullptr>(const aligned_vector<float>&);
 }

@@ -1,9 +1,9 @@
-#include "accumulate/scalar/instantiation.h"
+#include "accumulate/scalar_implementation.hpp"
 #include "accumulate/sse/instantiation.h"
 #include "accumulate/avx/instantiation.h"
 #include "accumulate/avx512f/instantiation.h"
-
 #include "accumulate/accumulate.h"
+#include "types/simd_tags.h"
 
 #include "instrset_detect.h"
 
@@ -52,12 +52,12 @@ BASELINE_F(Accumulate, Scalar, AccumulateFixture, 10, 10000)
 
 BENCHMARK_F(Accumulate, Sse, AccumulateFixture, 10, 10000)
 {
-    celero::DoNotOptimizeAway(simd::sse::accumulate(values));
+    celero::DoNotOptimizeAway(simd::detail::accumulate<simd::sse_tag>(values));
 }
 
 BENCHMARK_F(Accumulate, Avx, AccumulateFixture, 10, 10000)
 {
-    celero::DoNotOptimizeAway(simd::avx::accumulate(values));
+    celero::DoNotOptimizeAway(simd::detail::accumulate<simd::avx_tag>(values));
 }
 
 BENCHMARK_F(Accumulate, AutoChoosen, AccumulateFixture, 10, 10000)
@@ -65,7 +65,7 @@ BENCHMARK_F(Accumulate, AutoChoosen, AccumulateFixture, 10, 10000)
     celero::DoNotOptimizeAway(simd::accumulate(values));
 }
 
-//BENCHMARK_F(Accumulate, Avx512, AccumulateFixture, 10, 100)
+//BENCHMARK_F(Accumulate, Avx512f, AccumulateFixture, 10, 10000)
 //{
-//    celero::DoNotOptimizeAway(simd::avx512::accumulate(values));
+//    celero::DoNotOptimizeAway(simd::detail::accumulate<simd::avx512f_tag>(values));
 //}

@@ -2,22 +2,20 @@
 
 #include "static_aligned_allocator.hpp"
 
-#include <vector>
-
 namespace simd
 {
     namespace detail
     {
-        template<typename T>
-        using accumulate_t = T(const std::vector<T, static_aligned_allocator<T, MAX_REQUIRED_ALIGNMENT>>&);
+        template <typename T>
+        using accumulate_t = T(const aligned_vector<T>&);
 
         template <typename T>
-        extern detail::accumulate_t<T>* const accumulate;
+        extern detail::accumulate_t<T>* const best_available_accumulate;
     }
 
     template <typename T>
-    T accumulate(const std::vector<T, static_aligned_allocator<T, MAX_REQUIRED_ALIGNMENT>>& values)
+    T accumulate(const aligned_vector<T>& values)
     {
-        return detail::accumulate<T>(values);
+        return detail::best_available_accumulate<T>(values);
     }
 }

@@ -1,15 +1,28 @@
 #include "instantiation.h"
-#include "../implementation.hpp"
+#include "../simd_implementation_def.hpp"
 #include "types/avx/vector.hpp"
 
-namespace simd::avx
+namespace simd::detail
 {
-    template <typename T>
-    T accumulate(const std::vector<T, static_aligned_allocator<T, MAX_REQUIRED_ALIGNMENT>>& values)
+    template
+    <
+        typename simd_tag
+        , typename T
+        , typename std::enable_if_t
+        <
+            std::is_same_v<simd_tag, avx_tag>
+            and
+            (
+                std::is_same_v<T, float>
+                or std::is_same_v<T, double>
+            )
+        >*
+    >
+    T accumulate(const aligned_vector<T>& values)
     {
-        return simd::detail::accumulate<vector>(values);
+        return accumulate_simd_impl<simd_tag>(values);
     }
 
-    template float accumulate(const std::vector<float, static_aligned_allocator<float, MAX_REQUIRED_ALIGNMENT>>&);
-    template double accumulate(const std::vector<double, static_aligned_allocator<double, MAX_REQUIRED_ALIGNMENT>>&);
+    template float accumulate<avx_tag, float, nullptr>(const aligned_vector<float>&);
+    template double accumulate<avx_tag, double, nullptr>(const aligned_vector<double>&);
 }

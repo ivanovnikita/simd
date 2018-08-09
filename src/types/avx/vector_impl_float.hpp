@@ -1,15 +1,16 @@
 #pragma once
 
 #include "vector.hpp"
+#include "types/vector.hpp"
 
 #include <immintrin.h>
 
 #include <cstdint>
 
-namespace simd::avx
+namespace simd
 {
     template <>
-    class vector<float>
+    class vector<float, avx_tag>
     {
     public:
         using value_type = float;
@@ -34,47 +35,47 @@ namespace simd::avx
         intr_type m_values;
     };
 
-    vector<float> operator+(vector<float>, vector<float>) noexcept;
+    vector<float, avx_tag> operator+(vector<float, avx_tag>, vector<float, avx_tag>) noexcept;
 
     // definitions
 
-    vector<float>::vector(intr_type values) noexcept
+    vector<float, avx_tag>::vector(intr_type values) noexcept
         : m_values(values)
     {
     }
 
-    vector<float>::vector(const value_type* ptr) noexcept
+    vector<float, avx_tag>::vector(const value_type* ptr) noexcept
     {
         load_p(ptr);
     }
 
-    vector<float>::operator intr_type() const noexcept
+    vector<float, avx_tag>::operator intr_type() const noexcept
     {
         return m_values;
     }
 
-    void vector<float>::setzero_p() noexcept
+    void vector<float, avx_tag>::setzero_p() noexcept
     {
         m_values = _mm256_setzero_ps();
     }
 
-    void vector<float>::load_p(const value_type* ptr) noexcept
+    void vector<float, avx_tag>::load_p(const value_type* ptr) noexcept
     {
         m_values = _mm256_load_ps(ptr);
     }
 
-    void vector<float>::store_p(value_type* ptr) const noexcept
+    void vector<float, avx_tag>::store_p(value_type* ptr) const noexcept
     {
         _mm256_store_ps(ptr, m_values);
     }
 
-    vector<float>& vector<float>::operator+=(vector<float> rhs) noexcept
+    vector<float, avx_tag>& vector<float, avx_tag>::operator+=(vector<float, avx_tag> rhs) noexcept
     {
         m_values = *this + rhs;
         return *this;
     }
 
-    vector<float> operator+(vector<float> lhs, vector<float> rhs) noexcept
+    vector<float, avx_tag> operator+(vector<float, avx_tag> lhs, vector<float, avx_tag> rhs) noexcept
     {
         return _mm256_add_ps(lhs, rhs);
     }

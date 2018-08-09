@@ -1,23 +1,22 @@
 #pragma once
 
-#include "static_aligned_allocator.hpp"
-
-#include <vector>
+#include "simd_implementation_decl.hpp"
+#include "types/vector.hpp"
 
 namespace simd::detail
 {
-    template <template <typename> typename Vector, typename T>
-    T accumulate(const std::vector<T, static_aligned_allocator<T, MAX_REQUIRED_ALIGNMENT>>& values)
+    template <typename simd_tag, typename T>
+    T accumulate_simd_impl(const aligned_vector<T>& values)
     {
-        constexpr uint8_t step = Vector<T>::capacity;
+        constexpr uint8_t step = vector<T, simd_tag>::capacity;
 
-        Vector<T> simd_result;
+        vector<T, simd_tag> simd_result;
         simd_result.setzero_p();
 
         size_t i = step;
         for (; i < values.size(); i += step)
         {
-            simd_result += Vector<T>(&values[i - step]);
+            simd_result += vector<T, simd_tag>(&values[i - step]);
         }
 
         i -= step;
@@ -27,7 +26,7 @@ namespace simd::detail
             result += values[i];
         }
 
-        alignas(Vector<T>::required_alignment) T result_values[Vector<T>::capacity];
+        alignas(vector<T, simd_tag>::required_alignment) T result_values[vector<T, simd_tag>::capacity];
         simd_result.store_p(result_values);
         for (const T r : result_values)
         {

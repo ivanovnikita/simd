@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <new>
+#include <vector>
 
 namespace simd
 {
@@ -44,4 +45,7 @@ namespace simd
     }
 
     constexpr uint8_t MAX_REQUIRED_ALIGNMENT = 64; // AVX512
+
+    template <typename T>
+    using aligned_vector =  std::vector<T, static_aligned_allocator<T, MAX_REQUIRED_ALIGNMENT>>;
 }
