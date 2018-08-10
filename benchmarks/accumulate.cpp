@@ -16,12 +16,12 @@ class AccumulateFixture : public celero::TestFixture
 public:
     std::vector<celero::TestFixture::ExperimentValue> getExperimentValues() const override
     {
-        const int total_number_of_tests = 13;
+        const int total_number_of_tests = 1;
         std::vector<celero::TestFixture::ExperimentValue> problem_space;
         problem_space.reserve(total_number_of_tests);
 
-        int values_count = 64;
-        while (values_count < (2 << total_number_of_tests))
+        int values_count = 8192;
+//        while (values_count < (2 << total_number_of_tests))
         {
             problem_space.emplace_back(static_cast<int64_t>(values_count));
             values_count *= 2;

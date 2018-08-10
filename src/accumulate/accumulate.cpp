@@ -77,7 +77,7 @@ namespace simd::detail
     template <typename T>
     accumulate_t<T>* const best_available_accumulate = init<T>();
 
-    template<> accumulate_t<float>* const best_available_accumulate<float> = init<float>();
-    template<> accumulate_t<double>* const best_available_accumulate<double> = init<double>();
-    template<> accumulate_t<int8_t>* const best_available_accumulate<int8_t> = init<int8_t>();
+    extern template accumulate_t<float>* const best_available_accumulate<float>;
+    extern template accumulate_t<double>* const best_available_accumulate<double>;
+    extern template accumulate_t<int8_t>* const best_available_accumulate<int8_t>;
 }
