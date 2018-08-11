@@ -39,43 +39,43 @@ namespace simd
 
     // definitions
 
-    vector<int8_t, avx2_tag>::vector(intr_type values) noexcept
+    inline vector<int8_t, avx2_tag>::vector(intr_type values) noexcept
         : m_values(values)
     {
     }
 
-    vector<int8_t, avx2_tag>::vector(const value_type* ptr) noexcept
+    inline vector<int8_t, avx2_tag>::vector(const value_type* ptr) noexcept
     {
         load_p(ptr);
     }
 
-    vector<int8_t, avx2_tag>::operator intr_type() const noexcept
+    inline vector<int8_t, avx2_tag>::operator intr_type() const noexcept
     {
         return m_values;
     }
 
-    void vector<int8_t, avx2_tag>::setzero_p() noexcept
+    inline void vector<int8_t, avx2_tag>::setzero_p() noexcept
     {
         m_values = _mm256_setzero_si256();
     }
 
-    void vector<int8_t, avx2_tag>::load_p(const value_type* ptr) noexcept
+    inline void vector<int8_t, avx2_tag>::load_p(const value_type* ptr) noexcept
     {
         m_values = _mm256_load_si256(reinterpret_cast<const intr_type*>(ptr));
     }
 
-    void vector<int8_t, avx2_tag>::store_p(value_type* ptr) const noexcept
+    inline void vector<int8_t, avx2_tag>::store_p(value_type* ptr) const noexcept
     {
         _mm256_store_si256(reinterpret_cast<intr_type*>(ptr), m_values);
     }
 
-    vector<int8_t, avx2_tag>& vector<int8_t, avx2_tag>::operator+=(vector<int8_t, avx2_tag> rhs) noexcept
+    inline vector<int8_t, avx2_tag>& vector<int8_t, avx2_tag>::operator+=(vector<int8_t, avx2_tag> rhs) noexcept
     {
         m_values = *this + rhs;
         return *this;
     }
 
-    vector<int8_t, avx2_tag> operator+(vector<int8_t, avx2_tag> lhs, vector<int8_t, avx2_tag> rhs) noexcept
+    inline vector<int8_t, avx2_tag> operator+(vector<int8_t, avx2_tag> lhs, vector<int8_t, avx2_tag> rhs) noexcept
     {
         return _mm256_add_epi8(lhs, rhs);
     }

@@ -39,43 +39,43 @@ namespace simd
 
     // definitions
 
-    vector<float, avx512f_tag>::vector(intr_type values) noexcept
+    inline vector<float, avx512f_tag>::vector(intr_type values) noexcept
         : m_values(values)
     {
     }
 
-    vector<float, avx512f_tag>::vector(const value_type* ptr) noexcept
+    inline vector<float, avx512f_tag>::vector(const value_type* ptr) noexcept
     {
         load_p(ptr);
     }
 
-    vector<float, avx512f_tag>::operator intr_type() const noexcept
+    inline vector<float, avx512f_tag>::operator intr_type() const noexcept
     {
         return m_values;
     }
 
-    void vector<float, avx512f_tag>::setzero_p() noexcept
+    inline void vector<float, avx512f_tag>::setzero_p() noexcept
     {
         m_values = _mm512_setzero_ps();
     }
 
-    void vector<float, avx512f_tag>::load_p(const value_type* ptr) noexcept
+    inline void vector<float, avx512f_tag>::load_p(const value_type* ptr) noexcept
     {
         m_values = _mm512_load_ps(ptr);
     }
 
-    void vector<float, avx512f_tag>::store_p(value_type* ptr) const noexcept
+    inline void vector<float, avx512f_tag>::store_p(value_type* ptr) const noexcept
     {
         _mm512_store_ps(ptr, m_values);
     }
 
-    vector<float, avx512f_tag>& vector<float, avx512f_tag>::operator+=(vector<float, avx512f_tag> rhs) noexcept
+    inline vector<float, avx512f_tag>& vector<float, avx512f_tag>::operator+=(vector<float, avx512f_tag> rhs) noexcept
     {
         m_values = *this + rhs;
         return *this;
     }
 
-    vector<float, avx512f_tag> operator+(vector<float, avx512f_tag> lhs, vector<float, avx512f_tag> rhs) noexcept
+    inline vector<float, avx512f_tag> operator+(vector<float, avx512f_tag> lhs, vector<float, avx512f_tag> rhs) noexcept
     {
         return _mm512_add_ps(lhs, rhs);
     }

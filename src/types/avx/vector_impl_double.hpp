@@ -39,43 +39,43 @@ namespace simd
 
     // definitions
 
-    vector<double, avx_tag>::vector(intr_type values) noexcept
+    inline vector<double, avx_tag>::vector(intr_type values) noexcept
         : m_values(values)
     {
     }
 
-    vector<double, avx_tag>::vector(const value_type* ptr) noexcept
+    inline vector<double, avx_tag>::vector(const value_type* ptr) noexcept
     {
         load_p(ptr);
     }
 
-    vector<double, avx_tag>::operator intr_type() const noexcept
+    inline vector<double, avx_tag>::operator intr_type() const noexcept
     {
         return m_values;
     }
 
-    void vector<double, avx_tag>::setzero_p() noexcept
+    inline void vector<double, avx_tag>::setzero_p() noexcept
     {
         m_values = _mm256_setzero_pd();
     }
 
-    void vector<double, avx_tag>::load_p(const value_type* ptr) noexcept
+    inline void vector<double, avx_tag>::load_p(const value_type* ptr) noexcept
     {
         m_values = _mm256_load_pd(ptr);
     }
 
-    void vector<double, avx_tag>::store_p(value_type* ptr) const noexcept
+    inline void vector<double, avx_tag>::store_p(value_type* ptr) const noexcept
     {
         _mm256_store_pd(ptr, m_values);
     }
 
-    vector<double, avx_tag>& vector<double, avx_tag>::operator+=(vector<double, avx_tag> rhs) noexcept
+    inline vector<double, avx_tag>& vector<double, avx_tag>::operator+=(vector<double, avx_tag> rhs) noexcept
     {
         m_values = *this + rhs;
         return *this;
     }
 
-    vector<double, avx_tag> operator+(vector<double, avx_tag> lhs, vector<double, avx_tag> rhs) noexcept
+    inline vector<double, avx_tag> operator+(vector<double, avx_tag> lhs, vector<double, avx_tag> rhs) noexcept
     {
         return _mm256_add_pd(lhs, rhs);
     }

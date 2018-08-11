@@ -2,37 +2,36 @@
 
 #include "simd_implementation_decl.hpp"
 #include "types/vector.hpp"
-#include "types/operations_traits.hpp"
 
 #include <cassert>
 
 namespace simd::detail
 {
-    template <typename simd_tag, typename T>
+    template <typename simd_tag, typename T, typename op_traits>
     T accumulate_simd_impl(const aligned_vector<T>& values)
     {
-        const uint8_t adds_per_cycle = operations_traits::adds_per_cycle<simd_tag, T>;
-//        const uint8_t adds_per_cycle = 3;
+        const uint8_t adds_per_cycle = op_traits::adds_per_cycle;
         assert(adds_per_cycle >= 1);
 
-        std::vector<vector<T, simd_tag>> simd_results(adds_per_cycle);
-        for (auto& simd_result : simd_results)
+        vector<T, simd_tag> simd_results[adds_per_cycle];
+        for (size_t i = 0; i < adds_per_cycle; ++i)
         {
-            simd_result.setzero_p();
+            simd_results[i].setzero_p();
         }
 
         constexpr size_t substep = vector<T, simd_tag>::capacity;
-        const size_t step = substep * simd_results.size();
+        const size_t step = substep * adds_per_cycle;
         size_t i = step;
         for (; i < values.size(); i += step)
         {
-            for (size_t j = 0; j < simd_results.size(); ++j)
+            const T* values_ptr = &values[i - step];
+            for (size_t j = 0; j < adds_per_cycle; ++j, values_ptr += substep)
             {
-                simd_results[j] += vector<T, simd_tag>(&values[i - step + j * substep]);
+                simd_results[j] += vector<T, simd_tag>(values_ptr);
             }
         }
 
-        for (size_t i = 1; i < simd_results.size(); ++i)
+        for (size_t i = 1; i < adds_per_cycle; ++i)
         {
             simd_results[0] += simd_results[i];
         }

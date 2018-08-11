@@ -3,10 +3,10 @@
 #include "instrset_detect.h"
 
 #include "scalar_implementation.hpp"
-#include "sse/instantiation.h"
-#include "avx/instantiation.h"
-#include "avx2/instantiation.h"
-#include "avx512f/instantiation.h"
+#include "sse/declaration.hpp"
+#include "avx/declaration.hpp"
+#include "avx2/declaration.hpp"
+#include "avx512f/declaration.hpp"
 #include "simd_implementation_decl.hpp"
 #include "types/simd_tags.h"
 
@@ -77,7 +77,7 @@ namespace simd::detail
     template <typename T>
     accumulate_t<T>* const best_available_accumulate = init<T>();
 
-    extern template accumulate_t<float>* const best_available_accumulate<float>;
-    extern template accumulate_t<double>* const best_available_accumulate<double>;
-    extern template accumulate_t<int8_t>* const best_available_accumulate<int8_t>;
+    template accumulate_t<float>* const best_available_accumulate<float>;
+    template accumulate_t<double>* const best_available_accumulate<double>;
+    template accumulate_t<int8_t>* const best_available_accumulate<int8_t>;
 }

@@ -57,3 +57,39 @@ TYPED_TEST(accumulate_test, equal_elements)
 
     EXPECT_EQ(this->count, accumulate<simd_tag>(this->values));
 }
+
+template <class T>
+class accumulate_auto_test : public testing::Test
+{
+protected:
+    using value_type = T;
+
+    void SetUp() override
+    {
+        count = 111;
+        values.resize(count);
+        for (size_t i = 0; i < count; ++i)
+        {
+            values[i] = 1;
+        }
+    }
+
+    simd::aligned_vector<value_type> values;
+    size_t count;
+};
+
+using AccumulateAutoTesting = testing::Types
+<
+    float
+    , double
+    , int8_t
+>;
+
+TYPED_TEST_CASE(accumulate_auto_test, AccumulateAutoTesting);
+
+TYPED_TEST(accumulate_auto_test, linkage)
+{
+    using namespace simd;
+
+    EXPECT_EQ(this->count, accumulate(this->values));
+}

@@ -39,43 +39,43 @@ namespace simd
 
     // definitions
 
-    vector<float, sse_tag>::vector(intr_type values) noexcept
+    inline vector<float, sse_tag>::vector(intr_type values) noexcept
         : m_values(values)
     {
     }
 
-    vector<float, sse_tag>::vector(const value_type* ptr) noexcept
+    inline vector<float, sse_tag>::vector(const value_type* ptr) noexcept
     {
         load_p(ptr);
     }
 
-    vector<float, sse_tag>::operator intr_type() const noexcept
+    inline vector<float, sse_tag>::operator intr_type() const noexcept
     {
         return m_values;
     }
 
-    void vector<float, sse_tag>::setzero_p() noexcept
+    inline void vector<float, sse_tag>::setzero_p() noexcept
     {
         m_values = _mm_setzero_ps();
     }
 
-    void vector<float, sse_tag>::load_p(const value_type* ptr) noexcept
+    inline void vector<float, sse_tag>::load_p(const value_type* ptr) noexcept
     {
         m_values = _mm_load_ps(ptr);
     }
 
-    void vector<float, sse_tag>::store_p(value_type* ptr) const noexcept
+    inline void vector<float, sse_tag>::store_p(value_type* ptr) const noexcept
     {
         _mm_store_ps(ptr, m_values);
     }
 
-    vector<float, sse_tag>& vector<float, sse_tag>::operator+=(vector<float, sse_tag> rhs) noexcept
+    inline vector<float, sse_tag>& vector<float, sse_tag>::operator+=(vector<float, sse_tag> rhs) noexcept
     {
         m_values = *this + rhs;
         return *this;
     }
 
-    vector<float, sse_tag> operator+(vector<float, sse_tag> lhs, vector<float, sse_tag> rhs) noexcept
+    inline vector<float, sse_tag> operator+(vector<float, sse_tag> lhs, vector<float, sse_tag> rhs) noexcept
     {
         return _mm_add_ps(lhs, rhs);
     }
