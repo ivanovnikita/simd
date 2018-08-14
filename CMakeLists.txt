@@ -1,5 +1,5 @@
 project(simd)
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.10)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     option(USE_LIBC++ "Use libc++?" OFF)
@@ -97,16 +97,21 @@ add_library(${PROJECT_NAME}
 )
 target_include_directories(${PROJECT_NAME} PUBLIC src)
 
+
 add_implementation(benchmarks/accumulate accumulate_benchmark_src)
 sources_in_dir(benchmarks benchmark_src)
 set(benchmarks "benchmark-${PROJECT_NAME}")
 add_executable(${benchmarks} ${benchmark_src} ${accumulate_benchmark_src})
 target_link_libraries(${benchmarks} ${PROJECT_NAME} CONAN_PKG::Celero)
 
+
+enable_testing()
+
 find_package(GTest REQUIRED)
+include(GoogleTest)
 
 sources_in_dir(tests tests_src)
 add_executable(tests ${tests_src})
 target_link_libraries(tests ${PROJECT_NAME} GTest::Main)
 
-add_test(NAME tests COMMAND tests)
+gtest_discover_tests(tests)

@@ -1,8 +1,8 @@
 #include "accumulate/scalar_implementation.hpp"
-#include "accumulate/sse/instantiation.h"
-#include "accumulate/avx/instantiation.h"
-#include "accumulate/avx2/instantiation.h"
-#include "accumulate/avx512f/instantiation.h"
+#include "accumulate/sse/declaration.hpp"
+#include "accumulate/avx/declaration.hpp"
+#include "accumulate/avx2/declaration.hpp"
+#include "accumulate/avx512f/declaration.hpp"
 #include "accumulate/accumulate.h"
 
 #include <gtest/gtest.h>
