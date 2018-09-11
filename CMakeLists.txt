@@ -99,9 +99,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC src)
 
 
 add_implementation(benchmarks/accumulate accumulate_benchmark_src)
+add_implementation(benchmarks/types types_benchmark_src)
 sources_in_dir(benchmarks benchmark_src)
 set(benchmarks "benchmark-${PROJECT_NAME}")
-add_executable(${benchmarks} ${benchmark_src} ${accumulate_benchmark_src})
+add_executable(${benchmarks}
+    ${benchmark_src}
+    ${accumulate_benchmark_src}
+    ${types_benchmark_src}
+)
 target_link_libraries(${benchmarks} ${PROJECT_NAME} CONAN_PKG::Celero)
 
 

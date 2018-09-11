@@ -3,7 +3,7 @@
 #include "vector.hpp"
 #include "types/vector.hpp"
 
-#include <xmmintrin.h>
+#include <emmintrin.h>
 
 #include <cstdint>
 #include <cassert>
@@ -11,7 +11,7 @@
 namespace simd
 {
     template <>
-    class vector<float, sse_tag>
+    class vector<float, sse2_tag>
     {
     public:
         using value_type = float;
@@ -37,36 +37,36 @@ namespace simd
         intr_type m_values;
     };
 
-    vector<float, sse_tag> operator+(vector<float, sse_tag>, vector<float, sse_tag>) noexcept;
+    vector<float, sse2_tag> operator+(vector<float, sse2_tag>, vector<float, sse2_tag>) noexcept;
 
     // definitions
 
-    inline vector<float, sse_tag>::vector(intr_type values) noexcept
+    inline vector<float, sse2_tag>::vector(intr_type values) noexcept
         : m_values(values)
     {
     }
 
-    inline vector<float, sse_tag>::vector(const value_type* ptr) noexcept
+    inline vector<float, sse2_tag>::vector(const value_type* ptr) noexcept
     {
         load_p(ptr);
     }
 
-    inline vector<float, sse_tag>::operator intr_type() const noexcept
+    inline vector<float, sse2_tag>::operator intr_type() const noexcept
     {
         return m_values;
     }
 
-    inline void vector<float, sse_tag>::setzero_p() noexcept
+    inline void vector<float, sse2_tag>::setzero_p() noexcept
     {
         m_values = _mm_setzero_ps();
     }
 
-    inline void vector<float, sse_tag>::load_p(const value_type* ptr) noexcept
+    inline void vector<float, sse2_tag>::load_p(const value_type* ptr) noexcept
     {
         m_values = _mm_load_ps(ptr);
     }
 
-    inline void vector<float, sse_tag>::load_partial(const value_type* ptr, uint8_t n) noexcept
+    inline void vector<float, sse2_tag>::load_partial(const value_type* ptr, uint8_t n) noexcept
     {
         assert(n <= capacity);
 
@@ -79,12 +79,14 @@ namespace simd
         }
         case 2:
         {
-            m_values = _mm_setr_ps(*ptr, *(ptr + 1), 0.0f, 0.0f);
+            m_values = _mm_castpd_ps(_mm_load_sd(reinterpret_cast<const double*>(ptr)));
             break;
         }
         case 3:
         {
-            m_values = _mm_setr_ps(*ptr, *(ptr + 1), *(ptr + 2), 0.0f);
+            intr_type left = _mm_castpd_ps(_mm_load_sd(reinterpret_cast<const double*>(ptr)));
+            intr_type right = _mm_load_ss(ptr + 2);
+            m_values = _mm_movelh_ps(left, right);
             break;
         }
         case 4:
@@ -98,18 +100,18 @@ namespace simd
         }
     }
 
-    inline void vector<float, sse_tag>::store_p(value_type* ptr) const noexcept
+    inline void vector<float, sse2_tag>::store_p(value_type* ptr) const noexcept
     {
         _mm_store_ps(ptr, m_values);
     }
 
-    inline vector<float, sse_tag>& vector<float, sse_tag>::operator+=(vector<float, sse_tag> rhs) noexcept
+    inline vector<float, sse2_tag>& vector<float, sse2_tag>::operator+=(vector<float, sse2_tag> rhs) noexcept
     {
         m_values = *this + rhs;
         return *this;
     }
 
-    inline vector<float, sse_tag> operator+(vector<float, sse_tag> lhs, vector<float, sse_tag> rhs) noexcept
+    inline vector<float, sse2_tag> operator+(vector<float, sse2_tag> lhs, vector<float, sse2_tag> rhs) noexcept
     {
         return _mm_add_ps(lhs, rhs);
     }
