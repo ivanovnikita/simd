@@ -6,6 +6,7 @@
 #include <immintrin.h>
 
 #include <cstdint>
+#include <cassert>
 
 namespace simd
 {
@@ -45,6 +46,28 @@ namespace simd
     inline void vector<int8_t, avx2_tag>::setzero_p() noexcept
     {
         m_values = _mm256_setzero_si256();
+    }
+
+    template <>
+    inline void vector<int8_t , avx2_tag>::load_partial(const value_type* ptr, uint8_t n) noexcept
+    {
+        assert(n <= capacity);
+
+        alignas(required_alignment) value_type values[capacity];
+        assert(alignof(values) == required_alignment);
+
+        value_type* values_ptr = &values[0];
+
+        size_t i = 0;
+        for (; i < n; ++i, ++ptr, ++values_ptr)
+        {
+            *values_ptr = *ptr;
+        }
+        for (; i < capacity;  ++i, ++values_ptr)
+        {
+            *values_ptr = 0;
+        }
+        load_p(&values[0]);
     }
 
     template <>
