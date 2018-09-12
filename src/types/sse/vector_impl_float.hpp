@@ -102,5 +102,19 @@ namespace simd
         return *this;
     }
 
+    // sse3 could be faster
+    template <>
+    inline float horizontal_add(vector<float, sse_tag> v) noexcept
+    {
+        // v: [v4, v3, v2, v1]
+        // x - no matter
+        __m128 t1 = _mm_movehl_ps(v, v); // t1: [x, x, v4, v3]
+        __m128 t2 = _mm_add_ps(v, t1); // t2: [x, x, v4 + v2, v3 + v1]
+        __m128 t3 = _mm_shuffle_ps(t2, t2, 1); // t3: [x, x, x, v4 + v2]
+        __m128 t4 = _mm_add_ss(t2, t3); // t4: [x, x, x, v3 + v1 + v4 + v2]
+
+        return _mm_cvtss_f32(t4); // v3 + v1 + v4 + v2
+    }
+
 
 }

@@ -135,4 +135,28 @@ namespace simd
         m_values = *this + rhs;
         return *this;
     }
+
+    template <>
+    inline float horizontal_add(vector<float, avx_tag> v) noexcept
+    {
+        // v: [v8, v7, v6, v5, v4, v3, v2, v1]
+        // x - no matter
+
+        // t1: [x, x, v8 + v7, v6 + v5, x, x, v4 + v3, v2 + v1]
+        __m256 t1 = _mm256_hadd_ps(v, v);
+
+        // t2: [x, x, x, v8 + v7 + v6 + v5, x, x, x, v4 + v3 + v2 + v1]
+        __m256 t2 = _mm256_hadd_ps(t1, t1);
+
+        // t3: [x, x, x, v8 + v7 + v6 + v5]
+        __m128 t3 = _mm256_extractf128_ps(t2, 1);
+
+        __m128 t4 = _mm_add_ss
+        (
+            _mm256_castps256_ps128(t2) // [x, x, x, v4 + v3 + v2 + v1]
+            , t3
+        ); // t4: [x, x, x, v4 + v3 + v2 + v1 + v8 + v7 + v6 + v5]
+
+        return _mm_cvtss_f32(t4); // v4 + v3 + v2 + v1 + v8 + v7 + v6 + v5
+    }
 }

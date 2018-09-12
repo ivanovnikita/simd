@@ -74,5 +74,11 @@ namespace simd
         m_values = *this + rhs;
         return *this;
     }
+
+    template <>
+    inline double horizontal_add(vector<double, avx512f_tag> v) noexcept
+    {
+        return _mm512_reduce_add_pd(v);
+    }
 }
 
