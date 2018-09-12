@@ -6,6 +6,7 @@
 #include <immintrin.h>
 
 #include <cstdint>
+#include <cassert>
 
 namespace simd
 {
@@ -48,6 +49,28 @@ namespace simd
     }
 
     template <>
+    inline void vector<int8_t , avx2_tag>::load_partial(const value_type* ptr, uint8_t n) noexcept
+    {
+        assert(n <= capacity);
+
+        alignas(required_alignment) value_type values[capacity];
+        assert(alignof(values) == required_alignment);
+
+        value_type* values_ptr = &values[0];
+
+        size_t i = 0;
+        for (; i < n; ++i, ++ptr, ++values_ptr)
+        {
+            *values_ptr = *ptr;
+        }
+        for (; i < capacity;  ++i, ++values_ptr)
+        {
+            *values_ptr = 0;
+        }
+        load_p(&values[0]);
+    }
+
+    template <>
     inline void vector<int8_t, avx2_tag>::store_p(value_type* ptr) const noexcept
     {
         _mm256_store_si256(reinterpret_cast<intr_type*>(ptr), m_values);
@@ -63,5 +86,38 @@ namespace simd
     {
         m_values = *this + rhs;
         return *this;
+    }
+
+    template <>
+    inline int8_t horizontal_add(vector<int8_t, avx2_tag> v) noexcept
+    {
+        // v: [v32, ..., v1]
+        // x - no matter
+
+        //       | 64 bit : lower 16 bit  | 64 bit : lower 16 bit   | 64 bit : lower 16 bit  | 64 bit : lower 16 bit |
+        // sum1: [x, ... , v32 + ... + v25, x, ... , v24 + ... + v17, x, ... , v16 + ... + v9, x, ... , v8 + ... + v1]
+        __m256i sum1 = _mm256_sad_epu8(v, _mm256_setzero_si256());
+
+        //        | 32 bit   | 32 bit    | 32 bit    | 32 bit    | 32 bit  | 32 bit  | 32 bit  | 32 bit |
+        // sum2: [x, v24:v17, x, v24:v17, x, v24:v17, x, v32:v25, x, v8:v1, x, v8:v1, x, v8:v1, x, v16:v9]
+        __m256i sum2 = _mm256_shuffle_epi32(sum1, 2);
+
+        //       | 64 bit:16 bit  | 64 bit: 16 bit | 64 bit:16 bit | 64 bit:16 bit|
+        // sum3: [x, ..., v32:v17, x, ..., v32:v17, x, ..., v16:v1, x, ..., v16:v1]
+        __m256i sum3 = _mm256_add_epi16(sum1, sum2);
+
+        //       | 64 bit:16 bit  | 64 bit: 16 bit |
+        // sum4: [x, ..., v32:v17, x, ..., v32:v17]
+        __m128i sum4 = _mm256_extracti128_si256(sum3, 1);
+
+        __m128i sum5 = _mm_add_epi16
+        (                                // | 64 bit:16 bit | 64 bit:16 bit|
+            _mm256_castsi256_si128(sum3) // [x, ..., v16:v1, x, ..., v16:v1]
+            , sum4 //| 64 bit:16 bit| 64 bit:16 bit|
+        ); // sum5: [x, ..., v32:v1, x, ..., v32:v1]
+
+        //                                           | 32 bit:16 bit|
+        int sum6 = _mm_cvtsi128_si32(sum5); // sum6: [x, ..., v32:v1]
+        return static_cast<int8_t>(sum6);
     }
 }

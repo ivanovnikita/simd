@@ -6,6 +6,7 @@
 #include <immintrin.h>
 
 #include <cstdint>
+#include <cassert>
 
 namespace simd
 {
@@ -48,6 +49,39 @@ namespace simd
     }
 
     template <>
+    inline void vector<double, avx_tag>::load_partial(const value_type* ptr, uint8_t n) noexcept
+    {
+        assert(n <= capacity);
+
+        switch (n)
+        {
+            case 1:
+            {
+                m_values = _mm256_setr_m128d(_mm_load_sd(ptr), _mm_setzero_pd());
+                break;
+            }
+            case 2:
+            {
+                m_values = _mm256_setr_m128d(_mm_load_pd(ptr), _mm_setzero_pd());
+                break;
+            }
+            case 3:
+            {
+                m_values = _mm256_setr_m128d(_mm_load_pd(ptr), _mm_load_sd(ptr));
+                break;
+            }
+            case 4:
+            {
+                load_p(ptr);
+            }
+            default:
+            {
+                setzero_p();
+            }
+        }
+    }
+
+    template <>
     inline void vector<double, avx_tag>::store_p(value_type* ptr) const noexcept
     {
         _mm256_store_pd(ptr, m_values);
@@ -64,6 +98,27 @@ namespace simd
     {
         m_values = *this + rhs;
         return *this;
+    }
+
+    template <>
+    inline double horizontal_add(vector<double, avx_tag> v) noexcept
+    {
+        // v: [v4, v3, v2, v1]
+        // x - no matter
+
+        // t1: [x, v4 + v3, x, v2 + v1]
+        __m256d t1 = _mm256_hadd_pd(v, v);
+
+        // t2: [x, v4 + v3]
+        __m128d t2 = _mm256_extractf128_pd(t1, 1);
+
+        __m128d t3 = _mm_add_sd
+        (
+            _mm256_castpd256_pd128(t1) // [x, v2 + v1]
+            , t2
+        ); // t3: [x, x, x, v2 + v1 + v4 + v3]
+
+        return _mm_cvtsd_f64(t3); // v2 + v1 + v4 + v3
     }
 }
 

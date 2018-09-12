@@ -6,6 +6,7 @@
 #include <immintrin.h>
 
 #include <cstdint>
+#include <cassert>
 
 namespace simd
 {
@@ -48,6 +49,14 @@ namespace simd
     }
 
     template <>
+    inline void vector<float, avx512f_tag>::load_partial(const value_type* ptr, uint8_t n) noexcept
+    {
+        assert(n <= capacity);
+
+        m_values = _mm512_maskz_load_ps(__mmask16((1 << n) - 1), ptr);
+    }
+
+    template <>
     inline void vector<float, avx512f_tag>::store_p(value_type* ptr) const noexcept
     {
         _mm512_store_ps(ptr, m_values);
@@ -64,5 +73,11 @@ namespace simd
     {
         m_values = *this + rhs;
         return *this;
+    }
+
+    template <>
+    inline float horizontal_add(vector<float, avx512f_tag> v) noexcept
+    {
+        return _mm512_reduce_add_ps(v);
     }
 }

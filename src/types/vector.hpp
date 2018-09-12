@@ -36,4 +36,7 @@ namespace simd
 
     template <typename T, typename simd_tag>
     vector<T, simd_tag> operator+(vector<T, simd_tag>, vector<T, simd_tag>) noexcept;
+
+    template <typename T, typename simd_tag>
+    T horizontal_add(vector<T, simd_tag>) noexcept;
 }
