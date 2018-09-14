@@ -16,7 +16,8 @@ namespace simd::detail
             std::is_same_v<simd_tag, avx2_tag>
             and
             (
-                    std::is_same_v<value_type, int8_t>
+                std::is_same_v<value_type, int8_t>
+                or std::is_same_v<value_type, int16_t>
             )
         >* = nullptr
     >
