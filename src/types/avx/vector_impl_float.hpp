@@ -109,10 +109,12 @@ namespace simd
             case 8:
             {
                 load_p(ptr);
+                break;
             }
             default:
             {
                 setzero_p();
+                break;
             }
         }
     }

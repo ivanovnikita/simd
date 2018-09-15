@@ -73,10 +73,12 @@ namespace simd
             case 4:
             {
                 load_p(ptr);
+                break;
             }
             default:
             {
                 setzero_p();
+                break;
             }
         }
     }
