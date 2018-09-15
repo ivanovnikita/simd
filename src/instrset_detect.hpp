@@ -13,6 +13,10 @@ namespace simd
         {
             return has_sse();
         }
+        else if constexpr (std::is_same_v<simd_tag, sse2_tag>)
+        {
+            return has_sse2();
+        }
         else if constexpr (std::is_same_v<simd_tag, avx_tag>)
         {
             return has_avx();

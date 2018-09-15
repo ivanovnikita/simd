@@ -1,3 +1,5 @@
+#include "tests_utils.h"
+
 #include "accumulate/scalar_implementation.hpp"
 #include "accumulate/sse/declaration.hpp"
 #include "accumulate/avx/declaration.hpp"
@@ -6,13 +8,6 @@
 #include "accumulate/accumulate.h"
 
 #include <gtest/gtest.h>
-
-template<typename S, typename V>
-struct TypePair
-{
-    using simd_tag = S;
-    using value_type = V;
-};
 
 template <class T>
 class accumulate_test : public testing::Test
@@ -39,6 +34,7 @@ using AccumulateTestingPairs = testing::Types
     TypePair<simd::best_available_tag, float>
     , TypePair<simd::best_available_tag, double>
     , TypePair<simd::best_available_tag, int8_t>
+    , TypePair<simd::best_available_tag, int16_t>
     , TypePair<simd::scalar_tag, float>
     , TypePair<simd::scalar_tag, double>
     , TypePair<simd::sse_tag, float>
@@ -46,6 +42,8 @@ using AccumulateTestingPairs = testing::Types
     , TypePair<simd::avx_tag, double>
     , TypePair<simd::avx2_tag, int8_t>
     , TypePair<simd::avx2_tag, int16_t>
+    , TypePair<simd::avx512f_tag, float>
+    , TypePair<simd::avx512f_tag, double>
 >;
 
 TYPED_TEST_CASE(accumulate_test, AccumulateTestingPairs);
@@ -53,6 +51,8 @@ TYPED_TEST_CASE(accumulate_test, AccumulateTestingPairs);
 TYPED_TEST(accumulate_test, equal_elements)
 {
     using simd_tag = typename TypeParam::simd_tag;
+    SKIP_UNAVAILABLE_TEST(simd_tag)
+
     using namespace simd;
     using namespace simd::detail;
 
