@@ -114,7 +114,8 @@ find_package(GTest REQUIRED)
 include(GoogleTest)
 
 sources_in_dir(tests tests_src)
-add_executable(tests ${tests_src})
+add_implementation(tests/types types_tests_src)
+add_executable(tests ${tests_src} ${types_tests_src})
 target_link_libraries(tests ${PROJECT_NAME} GTest::Main)
 
 gtest_discover_tests(tests)
