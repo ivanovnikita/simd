@@ -100,15 +100,15 @@ namespace simd
         // sum2: [v4+v1, v3+v1, v2+v4, v1+v3]
         __m256i sum2 = _mm256_add_epi64(v, sum1);
 
-        // sum3: [x, x, x, v8:v5]
+        // sum3: [v4+v1, v3:v1]
         __m128i sum3 = _mm256_extracti128_si256(sum2, 1);
 
-        __m128i sum4 = _mm_add_epi32
+        __m128i sum4 = _mm_add_epi64
         (
-            _mm256_castsi256_si128(sum2) // [x, x, x, v4:v1]
+            _mm256_castsi256_si128(sum2) // [v2+v4, v1:v3]
             , sum3
-        ); // sum4: [x, ..., v8:v1]
+        ); // sum4: [v4+v1+v2+v4, v3+v1+v1+v3]
 
-        return _mm_cvtsi128_si32(sum4); // [v8:v1]
+        return _mm_cvtsi128_si64(sum4); // [v8:v1]
     }
 }
