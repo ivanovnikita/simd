@@ -40,6 +40,12 @@ namespace simd
     };
 
     template <>
+    struct operations_traits<avx2_tag, int32_t>
+    {
+        static constexpr uint8_t adds_per_cycle = 4;
+    };
+
+    template <>
     struct operations_traits<avx512f_tag, float>
     {
         static constexpr uint8_t adds_per_cycle = 4;

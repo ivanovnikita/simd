@@ -17,6 +17,7 @@ namespace simd::detail
             (
                 std::is_same_v<value_type, int8_t>
                 or std::is_same_v<value_type, int16_t>
+                or std::is_same_v<value_type, int32_t>
             )
         >*
     >

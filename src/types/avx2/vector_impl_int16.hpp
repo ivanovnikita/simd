@@ -91,7 +91,7 @@ namespace simd
     template <>
     inline int16_t horizontal_add(vector<int16_t, avx2_tag> v) noexcept
     {
-        // v: [v32, ..., v1]
+        // v: [v16, ..., v1]
         // x - no matter
 
         // sum1:

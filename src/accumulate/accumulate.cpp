@@ -81,4 +81,5 @@ namespace simd::detail
     template accumulate_t<double>* const best_available_accumulate<double>;
     template accumulate_t<int8_t>* const best_available_accumulate<int8_t>;
     template accumulate_t<int16_t>* const best_available_accumulate<int16_t>;
+    template accumulate_t<int32_t>* const best_available_accumulate<int32_t>;
 }
