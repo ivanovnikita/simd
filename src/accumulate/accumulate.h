@@ -10,8 +10,13 @@ namespace simd
         template <typename T>
         using accumulate_t = T(const aligned_vector<T>&);
 
+#ifdef __clang__
         template <typename T>
         extern detail::accumulate_t<T>* const best_available_accumulate;
+#elif defined __GNUC__
+        template <typename T>
+        extern detail::accumulate_t<T>* best_available_accumulate;
+#endif
     }
 
     template

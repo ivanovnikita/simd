@@ -74,6 +74,7 @@ namespace simd::detail
         }
     }
 
+#if defined(__clang__)
     template <typename T>
     accumulate_t<T>* const best_available_accumulate = init<T>();
 
@@ -83,4 +84,12 @@ namespace simd::detail
     template accumulate_t<int16_t>* const best_available_accumulate<int16_t>;
     template accumulate_t<int32_t>* const best_available_accumulate<int32_t>;
     template accumulate_t<int64_t>* const best_available_accumulate<int64_t>;
+#elif defined(__GNUC__)
+    template <> accumulate_t<float>* best_available_accumulate<float> = init<float>();
+    template <> accumulate_t<double>* best_available_accumulate<double> = init<double>();
+    template <> accumulate_t<int8_t>* best_available_accumulate<int8_t> = init<int8_t>();
+    template <> accumulate_t<int16_t>* best_available_accumulate<int16_t> = init<int16_t>();
+    template <> accumulate_t<int32_t>* best_available_accumulate<int32_t> = init<int32_t>();
+    template <> accumulate_t<int64_t>* best_available_accumulate<int64_t> = init<int64_t>();
+#endif
 }
