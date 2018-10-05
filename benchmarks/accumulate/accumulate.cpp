@@ -73,3 +73,13 @@ BENCHMARK_F(AccumulateInt32, Avx2, AccumulateFixture<int32_t>, 10, 10000)
 {
     celero::DoNotOptimizeAway(simd::detail::accumulate<simd::avx2_tag>(values));
 }
+
+BASELINE_F(AccumulateInt64, Scalar, AccumulateFixture<int64_t>, 10, 10000)
+{
+    celero::DoNotOptimizeAway(simd::detail::accumulate<simd::scalar_tag>(values));
+}
+
+BENCHMARK_F(AccumulateInt64, Avx2, AccumulateFixture<int64_t>, 10, 10000)
+{
+    celero::DoNotOptimizeAway(simd::detail::accumulate<simd::avx2_tag>(values));
+}
