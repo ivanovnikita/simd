@@ -6,6 +6,7 @@ using Avx2Vectors = testing::Types
     TypePair<simd::avx2_tag, int8_t >
     , TypePair<simd::avx2_tag, int16_t>
     , TypePair<simd::avx2_tag, int32_t>
+    , TypePair<simd::avx2_tag, int64_t>
 >;
 
 INSTANTIATE_TYPED_TEST_CASE_P

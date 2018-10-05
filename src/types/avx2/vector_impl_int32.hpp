@@ -82,7 +82,7 @@ namespace simd
         return _mm256_add_epi32(lhs, rhs);
     }
     template <>
-    inline vector<int32_t, avx2_tag>& vector<int16_t, avx2_tag>::operator+=(vector<int32_t, avx2_tag> rhs) noexcept
+    inline vector<int32_t, avx2_tag>& vector<int32_t, avx2_tag>::operator+=(vector<int32_t, avx2_tag> rhs) noexcept
     {
         m_values = *this + rhs;
         return *this;

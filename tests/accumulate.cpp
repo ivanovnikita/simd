@@ -44,6 +44,7 @@ using AccumulateTestingPairs = testing::Types
     , TypePair<simd::avx2_tag, int8_t>
     , TypePair<simd::avx2_tag, int16_t>
     , TypePair<simd::avx2_tag, int32_t>
+    , TypePair<simd::avx2_tag, int64_t>
     , TypePair<simd::avx512f_tag, float>
     , TypePair<simd::avx512f_tag, double>
 >;
@@ -88,6 +89,7 @@ using AccumulateAutoTesting = testing::Types
     , int8_t
     , int16_t
     , int32_t
+    , int64_t
 >;
 
 TYPED_TEST_CASE(accumulate_auto_test, AccumulateAutoTesting);
